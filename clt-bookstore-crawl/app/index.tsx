@@ -1,6 +1,45 @@
-import { Text, View } from "react-native";
+"use client";
+import { Text, View, FlatList } from "react-native";
+import { fetchBookstores } from "./store/slices/bookstoreData";
+import { useAppDispatch } from "./store/configureStore";
+import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
 
-export default function Index() {
+type Bookstore = {
+  _id: string;
+  name: string;
+  address: string;
+  county: string;
+  url: string;
+  place_id: string;
+};
+export default function Index(this: any) {
+  const dispatch = useAppDispatch();
+
+  const bookstores = useSelector(
+    (state: {
+      bookstores: {
+        initialState: boolean;
+        data: Bookstore[];
+        isLoading: boolean;
+      };
+    }) => state.bookstores.data
+  );
+
+  useEffect(() => {
+    dispatch(fetchBookstores());
+  }, [dispatch]);
+
+  const logStores = () => {
+    console.log(bookstores);
+  };
+
+  const renderItem = ({ item }: { item: Bookstore }) => (
+    <View>
+      <Text>{item.name}</Text>
+    </View>
+  );
+
   return (
     <View
       style={{
@@ -9,7 +48,8 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>This will be my mobile site for the CLT Bookstore Crawl!</Text>
+      <FlatList data={bookstores} renderItem={renderItem} />
+      <button onClick={logStores}>Log stores</button>
     </View>
   );
 }

@@ -12,6 +12,7 @@ import { fetchBookstores } from "./store/slices/bookstoreData";
 import { useAppDispatch } from "./store/configureStore";
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
+import { Picker } from "@react-native-picker/picker";
 
 type Bookstore = {
   _id: string;
@@ -38,24 +39,30 @@ export default function Index(this: any) {
     dispatch(fetchBookstores());
   }, [dispatch]);
 
-  const [selectedItems, setSelectedItems] = useState<Bookstore[]>([]);
+  const [selectedCounty, setSelectedCounty] = useState("All");
+  const counties = [
+    "All",
+    ...Array.from(
+      new Set((bookstores || []).map((store) => store.county)),
+    ).sort(),
+  ];
 
-  const handleSelect = (item: Bookstore) => {
-    // Prevent duplicates
-    if (!selectedItems.find((selected) => selected._id === item._id)) {
-      setSelectedItems([...selectedItems, item]);
-    }
-  };
+  const filteredBookstores = bookstores?.filter((store) => {
+    const matchesCounty =
+      selectedCounty === "All" ||
+      store.county?.trim().toLowerCase() ===
+        selectedCounty.trim().toLowerCase();
+
+    return matchesCounty;
+  });
+
   const { width } = useWindowDimensions();
-
   const numColumns = width > 900 ? 3 : width > 600 ? 2 : 1;
 
   const renderItem = ({ item }: { item: Bookstore }) => {
-    const isSelected = selectedItems.some((s) => s._id === item._id);
-
     return (
-      <TouchableOpacity onPress={() => handleSelect(item)} activeOpacity={0.8}>
-        <View style={[styles.card, isSelected && styles.selectedCard]}>
+      <TouchableOpacity activeOpacity={0.8}>
+        <View style={styles.card}>
           <Text style={styles.title} numberOfLines={1}>
             {item.name}
           </Text>
@@ -81,9 +88,25 @@ export default function Index(this: any) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.filterWrapper}>
+        <Text style={styles.filterLabel}>Filter by County</Text>
+
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedCounty}
+            onValueChange={(value) => setSelectedCounty(value)}
+            dropdownIconColor="#6f00d6"
+            style={styles.picker}
+          >
+            {counties.map((county) => (
+              <Picker.Item key={county} label={county} value={county} />
+            ))}
+          </Picker>
+        </View>
+      </View>
       <FlatList
         key={`columns-${numColumns}`}
-        data={bookstores}
+        data={filteredBookstores}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
         numColumns={numColumns}
@@ -154,5 +177,37 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "600",
     fontSize: 14,
+  },
+  filterContainer: {
+    width: "90%",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 12,
+    overflow: "hidden",
+  },
+
+  filterWrapper: {
+    width: "90%",
+    marginBottom: 16,
+  },
+
+  filterLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+    color: "#333",
+  },
+
+  pickerContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    overflow: "hidden",
+  },
+
+  picker: {
+    padding: 10,
+    width: "100%",
   },
 });

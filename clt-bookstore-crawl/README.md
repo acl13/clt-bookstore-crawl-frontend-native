@@ -1,50 +1,77 @@
-# Welcome to your Expo app 👋
+# CLT Bookstore Crawl
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A responsive **React Native (Expo)** application that displays independent bookstores that participated in the 2025 CLT Bookstore Crawl in a modern, card-based UI. Users can browse all bookstores and filter results by county using a dropdown selector.
 
-## Get started
+Built as a **mobile-first, cross-platform** project and deployed to the web via Expo + Vercel.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Live Demo
 
-2. Start the app
+[Deployment](https://clt-bookstore-crawl-frontend.vercel.app/)
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Features
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Displays bookstores in a responsive card grid layout
+- Filter by county using a dropdown selector
+- “Visit Website” button for each bookstore
+- Mobile-first responsive design
+- Works on web and mobile via Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Tech Stack
 
-When you're ready, run:
+- **React Native**
+- **Expo**
+- **TypeScript**
+- `FlatList` for performant list rendering
+- `@react-native-picker/picker` for filtering
+- `useWindowDimensions` for responsive layout
+- **Vercel** for deployment
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Key Implementation Details
 
-## Learn more
+### Responsive Grid Layout
 
-To learn more about developing your project with Expo, look at the following resources:
+The number of columns dynamically adjusts based on screen width:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- 1 column on mobile
+- 2 columns on tablet
+- 3 columns on desktop
 
-## Join the community
+To prevent React Native’s `numColumns` runtime error, the `FlatList` `key` prop is updated when the column count changes to force a full re-render.
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Filtering Logic
+
+County filtering is handled via:
+
+- `useState` for selected county
+- A derived `filteredBookstores` array
+- Conditional filtering logic (`All Counties` resets the view)
+
+---
+
+### Card UI Design
+
+Each bookstore is displayed in a uniform-height card containing:
+
+- Name
+- Address
+- County
+- Website button (using `Linking.openURL()`)
+
+Cards use:
+
+- Consistent `minHeight`
+- Flexbox layout
+- Subtle shadow and rounded corners
+- Even spacing in grid format
+
+---

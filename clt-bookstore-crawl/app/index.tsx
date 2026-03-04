@@ -24,6 +24,15 @@ type Bookstore = {
 };
 export default function Index(this: any) {
   const dispatch = useAppDispatch();
+  const isLoading = useSelector(
+    (state: {
+      bookstores: {
+        initialState: boolean;
+        data: Bookstore[];
+        isLoading: boolean;
+      };
+    }) => state.bookstores.isLoading,
+  );
 
   const bookstores = useSelector(
     (state: {
@@ -86,7 +95,11 @@ export default function Index(this: any) {
     );
   };
 
-  return (
+  return isLoading ? (
+    <View style={styles.container}>
+      <Text style={styles.title}>Loading...</Text>
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.filterWrapper}>
         <Text style={styles.filterLabel}>Filter by County</Text>
